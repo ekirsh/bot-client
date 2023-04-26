@@ -166,6 +166,7 @@ function App() {
                                         </div>
                                     </div>
                                     <div className="px-6 py-4">
+                                        <p className="text-gray-400 text-base mb-4 gap-2">{result.info.description}</p>
                                         <h3 className="text-gray-800 font-semibold text-lg mb-2">Frequent Collaborators:</h3>
                                         <ul className="flex flex-wrap mb-4">
                                             {result.collaborators.slice(0, 6).map((c, index) => (
@@ -186,7 +187,6 @@ function App() {
                                                 </div>
                                             ))}
                                         </div>
-                                        <p className="text-gray-400 text-base mb-4">{result.info.description}</p>
                                     </div>
                                 </div>
                             ))}
