@@ -16,6 +16,12 @@ function App() {
     const [active_scrapers, setActiveScrapers] = useState([]);
     const [searchError, setSearchError] = useState(false);
 
+    function getFirstThreeSentences(text) {
+        const sentences = text.split('.');
+        const firstThreeSentences = sentences.slice(0, 3);
+        return firstThreeSentences.join('. ') + '.';
+    }
+
     useEffect(() => {
         fetch('https://fastapi-production-3513.up.railway.app/get_active_scrapers')
             .then(response => response.json())
@@ -52,9 +58,7 @@ function App() {
                 console.log(loading)
                 if (Array.isArray(data)) {
                     setCollaborators(data);
-                    if (data.length > 1) {
-                        setLoading(false);
-                    }
+                    setLoading(false);
                     console.log(loading)
                 }
                 else {
@@ -161,7 +165,7 @@ function App() {
                                 <div
                                     className="absolute bottom-0 left-0 right-0 px-6 py-4 bg-gradient-to-t from-black to-transparent">
                                     <h2 className="text-white font-bold text-xl mb-2">{result.name}</h2>
-                                    <p className="text-gray-400 text-base mb-4">{result.info.description}</p>
+                                    <p className="text-gray-400 text-base mb-4">{getFirstThreeSentences(result.info.description)}</p>
                                 </div>
                         </div>
                         <div className="px-6 py-4">
@@ -173,7 +177,7 @@ function App() {
                                 ))}
                                 </ul>
                                     <h3 className="text-gray-800 font-semibold text-lg mb-2">Top Songs:</h3>
-                                    <div class="grid grid-cols-2 gap-2">
+                                    <div className="grid grid-cols-2 gap-2">
                                         {result.songs.slice(0,6).map((song, index) => (
                                             <div className="bg-white rounded-lg shadow-lg overflow-hidden">
                                                 <img className="w-full h-40 object-cover" src={song.song_art}
