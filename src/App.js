@@ -31,10 +31,10 @@ function App() {
         e.preventDefault();
         console.log('submitting');
         setClicked(true);
+        setLoading(true);
         const response = await fetch(`https://fastapi-production-3513.up.railway.app/artists/${input}`)
             .then(response => response.json())
             .then(data => {
-                setLoading(true);
                 setArtistID(data)
                 console.log(data)
             })
