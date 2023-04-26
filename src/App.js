@@ -51,6 +51,9 @@ function App() {
                 console.log(data);
                 if (Array.isArray(data)) {
                     setCollaborators(data);
+                    if (collaborators.length > 1) {
+                        setLoading(false);
+                    }
                 }
                 else {
                     if (data['message'] === 'Scraper had an error') {
@@ -61,7 +64,7 @@ function App() {
 
             return () => clearInterval(interval);
         }
-    }, [artistID]);
+    }, [artistID, clicked]);
 
     function backToHome() {
         setClicked(false);
@@ -167,7 +170,7 @@ function App() {
                                         href="">{c.name}</a></li>
                                 ))}
                                 </ul>
-                                    <h3 class="text-gray-800 font-semibold text-lg mb-2">Top Songs:</h3>
+                                    <h3 className="text-gray-800 font-semibold text-lg mb-2">Top Songs:</h3>
                                     <div class="grid grid-cols-2 gap-2">
                                         {result.songs.slice(0,6).map((song, index) => (
                                             <div className="bg-white rounded-lg shadow-lg overflow-hidden">
