@@ -96,51 +96,7 @@ function App() {
                             </div>
 
                             <div className="py-4">
-                                <a href="#"
-                                   className="flex justify-between items-center px-6 py-3 text-sm font-semibold text-gray-700 hover:text-white hover:bg-slate-900 rounded-lg shadow">
-                                    <div className="flex items-center">
-                                        <img className="w-10 h-10 rounded-full mr-4 shadow-sm" src="https://images.genius.com/a9838349411500f7ecb1ebb0d63e06f9.684x684x1.jpg"
-                                             alt="Avatar of Jonathan Reinink" />
-                                        <div className="flex-grow">
-                                            <div className="font-medium">Charlieonnafriday</div>
-                                            <div className="text-xs text-green-500">Done</div>
-                                        </div>
-                                    </div>
-                                    <svg className="h-4 w-4 text-green-500" viewBox="0 0 24 24">
-                                        <path fill="currentColor"
-                                              d="M12 1c-5 0-9 4-9 9v4l3-3h6v2h-2v2h2v2h-2v2h2v2h-2v2h2c5 0 9-4 9-9v-4l-3 3h-6v-2h2v-2h-2v-2h2v-2h-2v-2h2V1z"/>
-                                    </svg>
-                                </a>
-                                <a href="#"
-                                   className="flex justify-between items-center px-6 py-3 text-sm font-semibold text-gray-700 hover:text-white hover:bg-slate-900 rounded-lg shadow">
-                                    <div className="flex items-center">
-                                        <img className="w-10 h-10 rounded-full mr-4 shadow-sm" src="https://images.genius.com/a9838349411500f7ecb1ebb0d63e06f9.684x684x1.jpg"
-                                             alt="Avatar of Jonathan Reinink" />
-                                        <div className="flex-grow">
-                                            <div className="font-medium">Sabrina Carpenter</div>
-                                            <div className="text-xs text-red-500">Error</div>
-                                        </div>
-                                    </div>
-                                    <svg className="h-4 w-4 text-red-500" viewBox="0 0 24 24">
-                                        <path fill="currentColor"
-                                              d="M12 1c-5 0-9 4-9 9v4l3-3h6v2h-2v2h2v2h-2v2h2v2h-2v2h2c5 0 9-4 9-9v-4l-3 3h-6v-2h2v-2h-2v-2h2v-2h-2v-2h2V1z"/>
-                                    </svg>
-                                </a>
-                                <a href="#"
-                                   className="flex justify-between items-center px-6 py-3 text-sm font-semibold text-gray-700 hover:text-white hover:bg-slate-900 rounded-lg shadow">
-                                    <div className="flex items-center">
-                                        <img className="w-10 h-10 rounded-full mr-4 shadow-sm" src="https://images.genius.com/a9838349411500f7ecb1ebb0d63e06f9.684x684x1.jpg"
-                                             alt="Avatar of Jonathan Reinink" />
-                                        <div className="flex-grow">
-                                            <div className="font-medium">Charlieonnafriday</div>
-                                            <div className="text-xs text-green-500">Done</div>
-                                        </div>
-                                    </div>
-                                    <svg className="h-4 w-4 text-green-500" viewBox="0 0 24 24">
-                                        <path fill="currentColor"
-                                              d="M12 1c-5 0-9 4-9 9v4l3-3h6v2h-2v2h2v2h-2v2h2v2h-2v2h2c5 0 9-4 9-9v-4l-3 3h-6v-2h2v-2h-2v-2h2v-2h-2v-2h2V1z"/>
-                                    </svg>
-                                </a>
+
                             </div>
                         </div>
 
