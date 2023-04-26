@@ -49,11 +49,13 @@ function App() {
                 const response = await fetch(`https://fastapi-production-3513.up.railway.app/artist-data/${artistID}`);
                 const data = await response.json();
                 console.log(data);
+                console.log(loading)
                 if (Array.isArray(data)) {
                     setCollaborators(data);
-                    if (collaborators.length > 1) {
+                    if (data.length > 1) {
                         setLoading(false);
                     }
+                    console.log(loading)
                 }
                 else {
                     if (data['message'] === 'Scraper had an error') {
