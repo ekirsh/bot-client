@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios'
 import Typed from 'typed.js';
+import Masonry from 'react-masonry-css';
 
 
 function App() {
@@ -17,12 +18,93 @@ function App() {
     const [active_scrapers, setActiveScrapers] = useState([]);
     const [searchError, setSearchError] = useState(false);
 
+    const breakpointColumnsObj = {
+        default: 4,
+        1100: 3,
+        700: 2,
+        500: 1,
+    };
+
+    const handleProducerClick = (producer) => {
+        setClicked(true);
+        setMenuOpen(false)
+        setSearch(false);
+        setLoading(true);
+        setCollaborators([]);
+        console.log(producer._id.toString())
+        setArtistID(producer._id.toString());
+        console.log(`Producer ${producer.name} clicked!`);
+    };
+
+    const openInstagramProfile = (username) => {
+        const url = `https://www.instagram.com/${username}`;
+        window.open(url, '_blank', 'noopener noreferrer');
+    };
+
+    const openTwitterProfile = (username) => {
+        const url = `https://www.twitter.com/${username}`;
+        window.open(url, '_blank', 'noopener noreferrer');
+    }
+
+    const ProducerCard = ({ producer, onClick }) => {
+        const statusColor = {
+            complete: 'bg-green-500',
+            error: 'bg-red-500',
+            active: 'bg-slate-500',
+        };
+
+        return (
+            <div onClick={onClick} className="bg-white shadow-md rounded-lg p-6 mx-4 my-4 w-64">
+                <div className="flex items-center">
+                    <div className="text-lg font-semibold">{producer.name}</div>
+                </div>
+                <div className="mt-4">
+                    <button
+                        className={`w-24 py-2 rounded-full text-white flex font-semibold items-center justify-center ${
+                            statusColor[producer.status]
+                        }`}
+                    >
+                        <span className="mr-2">{producer.status}</span>
+                        {producer.status === 'active' && (
+                            <div role="status" className="flex flex-row">
+                                <svg aria-hidden="true"
+                                     className="inline w-4 h-4 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                                     viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                                        fill="currentColor"/>
+                                    <path
+                                        d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                                        fill="currentFill"/>
+                                </svg>
+                                <span className="sr-only">Loading...</span>
+                            </div>
+                        )}
+                    </button>
+
+                </div>
+            </div>
+        );
+    };
+
+    const istyle = {
+        color: '#c13584',
+    };
+
+    const tstyle = {
+        color: '#1da1f2',
+    };
+
+
 
     useEffect(() => {
-        fetch('https://fastapi-production-3513.up.railway.app/get_active_scrapers')
-            .then(response => response.json())
-            .then(data => setActiveScrapers(data))
-            .catch(error => console.error(error));
+        const interval = setInterval(async () => {
+            fetch('https://fastapi-production-3513.up.railway.app/get_active_scrapers')
+                .then(response => response.json())
+                .then(data => setActiveScrapers(data))
+                .catch(error => console.error(error));
+        }
+        , 10000);
     }, []);
 
     function toggleMenu() {
@@ -32,15 +114,18 @@ function App() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log('submitting');
-        setClicked(true);
-        setLoading(true);
         const response = await fetch(`https://fastapi-production-3513.up.railway.app/artists/${input}`)
             .then(response => response.json())
             .then(data => {
+                setClicked(true);
+                setLoading(true);
                 setArtistID(data)
                 console.log(data)
             })
-            .catch(error => console.error(error));
+            .catch(error => {
+                console.error(error)
+                setSearchError(true)
+            });
     };
 
     useEffect(() => {
@@ -63,18 +148,43 @@ function App() {
                         console.log('SCRAPER ERROR')
                     }
                 }
-            }, 10000);
+            }, 4000);
 
             return () => clearInterval(interval);
         }
     }, [artistID, clicked]);
 
     function backToHome() {
+        setCollaborators([]);
         setClicked(false);
         setLoading(false);
+        setSearchError(false);
         setMenuOpen(false);
         setInput('');
+        setSearch(true);
     }
+
+    const handleMouseEnter = (event) => {
+        const element = event.target;
+        const allElements = document.querySelectorAll('.producer-card');
+        allElements.forEach((el) => {
+            if (el !== element) {
+                console.log(el)
+                console.log(element)
+                el.classList.add('blur-and-darken');
+            }
+        });
+    };
+
+    const handleMouseLeave = (event) => {
+        const element = event.target;
+        const allElements = document.querySelectorAll('.producer-card');
+        allElements.forEach((el) => {
+            if (el !== element) {
+                el.classList.remove('blur-and-darken');
+            }
+        });
+    };
 
 
     return (
@@ -89,7 +199,7 @@ function App() {
                         </svg>
                     </button>
                     {menuOpen && (
-                        <div className="fixed top-0 right-0 h-screen w-64 bg-white shadow-lg">
+                        <div className="fixed top-0 right-0 h-screen w-64 z-50 bg-white shadow-lg">
                             <div
                                 className="flex justify-between items-center bg-slate-800 text-white py-4 px-6 rounded-t-lg">
                                 <h2 className="text-lg font-semibold">Scanned Artists</h2>
@@ -102,7 +212,9 @@ function App() {
                             </div>
 
                             <div className="py-4">
-
+                                {active_scrapers.map((scr) => (
+                                    <ProducerCard onClick={() => handleProducerClick(scr)} key={scr.id} producer={scr} />
+                                ))}
                             </div>
                         </div>
 
@@ -154,15 +266,49 @@ function App() {
                     ) : (
 
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                        <Masonry
+                            breakpointCols={breakpointColumnsObj}
+                            className="my-masonry-grid"
+                            columnClassName="my-masonry-grid_column"
+                        >
                             {collaborators.map((result, index) => (
-                                <div className="bg-white rounded-lg shadow-lg overflow-hidden mx-4 my-2 md:mx-2 md:my-4 max-w-sm">
+                                <div onMouseEnter={handleMouseEnter}
+                                     onMouseLeave={handleMouseLeave} className="bg-white rounded-lg shadow-md overflow-hidden mx-4 my-2 md:mx-2 md:my-4 transform transition-all duration-300 hover:scale-102 hover:shadow-lg producer-card">
                                     <div className="relative">
                                         <img className="w-full h-64 object-cover" src={result.info.image}
                                              alt="{{ producer.name }}" />
                                         <div
                                             className="absolute bottom-0 left-0 right-0 px-6 py-4 bg-gradient-to-t from-black to-transparent">
                                             <h2 className="text-white font-bold text-xl mb-2">{result.name}</h2>
+                                            <div className="flex flex-wrap gap-4">
+                                                {result.info.instagram !== null && (
+                                                <button onClick={() => openInstagramProfile(result.info.instagram)}>
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        className="h-7 w-7"
+                                                        fill="currentColor"
+                                                        style={istyle}
+                                                        viewBox="0 0 24 24">
+                                                        <path
+                                                            d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                                                    </svg>
+                                                </button>
+                                                )}
+                                                {result.info.twitter !== null && (
+                                                <button onClick={() => openTwitterProfile(result.info.twitter)}>
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        className="h-7 w-7"
+                                                        fill="currentColor"
+                                                        style={tstyle}
+                                                        viewBox="0 0 24 24">
+                                                        <path
+                                                            d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                                                    </svg>
+                                                </button>
+                                                )}
+                                            </div>
+
                                         </div>
                                     </div>
                                     <div className="px-6 py-4">
@@ -190,10 +336,9 @@ function App() {
                                     </div>
                                 </div>
                             ))}
-                        </div>
+                        </Masonry>
                         )}
                 </div>
-
             )}
         </div>
 
