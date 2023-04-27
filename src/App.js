@@ -200,7 +200,7 @@ function App() {
     return (
         <div className="min-h-screen bg-gradient-to-r from-gray-100 to-gray-200">
 
-            <header className="py-6 px-8 bg-white shadow-md">
+            <header className="py-6 px-8 bg-white shadow-md sticky top-0">
                 <div className="flex justify-between items-center">
                     <h1 onClick={backToHome} className="text-xl font-bold text-gray-900">beatscout</h1>
                     <button onClick={toggleMenu} className="p-2 bg-gray-200 rounded-md text-gray-900 hover:bg-gray-300 focus:outline-none">
