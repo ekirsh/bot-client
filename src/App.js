@@ -200,8 +200,8 @@ function App() {
     return (
         <div className="min-h-screen bg-gradient-to-r from-gray-100 to-gray-200">
 
-            <header className="py-6 px-8 bg-white shadow-md sticky top-0">
-                <div className="flex justify-between items-center sticky top-0">
+            <header className="py-6 px-8 bg-white shadow-md sticky z-50 top-0">
+                <div className="flex justify-between items-center z-50 sticky top-0">
                     <h1 onClick={backToHome} className="text-xl font-bold text-gray-900">beatscout</h1>
                     <button onClick={toggleMenu} className="p-2 bg-gray-200 rounded-md text-gray-900 hover:bg-gray-300 focus:outline-none">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
