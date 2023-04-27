@@ -95,6 +95,12 @@ function App() {
         color: '#1da1f2',
     };
 
+    useEffect(() => {
+        fetch('https://fastapi-production-3513.up.railway.app/get_active_scrapers')
+            .then(response => response.json())
+            .then(data => setActiveScrapers(data))
+            .catch(error => console.error(error));
+    }, []);
 
 
     useEffect(() => {
@@ -165,25 +171,29 @@ function App() {
     }
 
     const handleMouseEnter = (event) => {
-        const element = event.target;
-        const allElements = document.querySelectorAll('.producer-card');
-        allElements.forEach((el) => {
-            if (el !== element) {
-                console.log(el)
-                console.log(element)
-                el.classList.add('blur-and-darken');
-            }
-        });
+        const isMobile = window.matchMedia('(max-width: 767px)').matches;
+        if (!isMobile) {
+            const element = event.target;
+            const allElements = document.querySelectorAll('.producer-card');
+            allElements.forEach((el) => {
+                if (el !== element) {
+                    el.classList.add('blur-and-darken');
+                }
+            });
+        }
     };
 
     const handleMouseLeave = (event) => {
-        const element = event.target;
-        const allElements = document.querySelectorAll('.producer-card');
-        allElements.forEach((el) => {
-            if (el !== element) {
-                el.classList.remove('blur-and-darken');
-            }
-        });
+        const isMobile = window.matchMedia('(max-width: 767px)').matches;
+        if (!isMobile) {
+            const element = event.target;
+            const allElements = document.querySelectorAll('.producer-card');
+            allElements.forEach((el) => {
+                if (el !== element) {
+                    el.classList.remove('blur-and-darken');
+                }
+            });
+        }
     };
 
 
