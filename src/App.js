@@ -222,7 +222,7 @@ function App() {
                                 </button>
                             </div>
 
-                            <div className="py-4">
+                            <div className="py-4 overflow-y-auto h-full">
                                 {active_scrapers.map((scr) => (
                                     <ProducerCard onClick={() => handleProducerClick(scr)} key={scr.id} producer={scr} />
                                 ))}
