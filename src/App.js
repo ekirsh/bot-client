@@ -164,6 +164,7 @@ function App() {
         setCollaborators([]);
         setClicked(false);
         setLoading(false);
+        setArtistID('');
         setSearchError(false);
         setMenuOpen(false);
         setInput('');
