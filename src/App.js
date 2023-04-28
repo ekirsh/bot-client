@@ -15,8 +15,27 @@ function App() {
     const [search, setSearch] = useState(true);
     const statusRef = useRef(null);
     const [menuOpen, setMenuOpen] = useState(false);
+    const [scraperError, setScraperError] = useState(false);
     const [active_scrapers, setActiveScrapers] = useState([]);
     const [searchError, setSearchError] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
+
+    useEffect(() => {
+        if (loading) {
+            const options = {
+                strings: ['We\'re gathering your data for you, wait just a second...', 'Just a bit longer now...', 'Scraping our database for the latest data...'],
+                typeSpeed: 50,
+                backSpeed: 30,
+                loop: true,
+            };
+
+            const typed = new Typed(statusRef.current, options);
+
+            return () => {
+                typed.destroy();
+            };
+        }
+    }, [loading]);
 
     const breakpointColumnsObj = {
         default: 4,
@@ -25,14 +44,46 @@ function App() {
         500: 1,
     };
 
+    const formatDate = (timestamp) => {
+        if (!timestamp) return '';
+        const date = new Date(timestamp);
+        const options = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        };
+        const formatter = new Intl.DateTimeFormat(undefined, options);
+        return formatter.format(date);
+    };
+
+    const TimestampDisplay = ({ timestamp }) => {
+        return (
+            <div className="text-sm font-normal text-gray-500">
+                {formatDate(timestamp)}
+            </div>
+        );
+    };
+
+    function isDictionary(element) {
+        return element !== null && typeof element === 'object' && element.constructor === Object;
+    }
+
     const handleProducerClick = (producer) => {
-        setClicked(true);
-        setMenuOpen(false)
-        setSearch(false);
-        setLoading(true);
+        setClicked(false);
+        setSearch(true);
+        setArtistID('');
         setCollaborators([]);
-        console.log(producer._id.toString())
+        setSearchError(false);
+        setScraperError(false);
         setArtistID(producer._id.toString());
+        setMenuOpen(false)
+        setLoading(true);
+        setClicked(true);
+        checkScraperStatus(producer._id.toString());
+        checkArtistData(producer._id.toString());
+        console.log(producer)
         console.log(`Producer ${producer.name} clicked!`);
     };
 
@@ -40,6 +91,62 @@ function App() {
         const url = `https://www.instagram.com/${username}`;
         window.open(url, '_blank', 'noopener noreferrer');
     };
+
+    const checkArtistData = (artist) => {
+        fetch(`https://fastapi-production-3513.up.railway.app/artist-data/${artist}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                console.log(loading);
+                if (!data.hasOwnProperty('message')) {
+                    console.log(data['_id'])
+                    console.log(parseInt(artist))
+                    if (data['_id'] === parseInt(artist)) {
+                        console.log('DATA')
+                        setCollaborators(data['collaborators']);
+                        setLoading(false);
+                        setSearch(false);
+                        console.log(loading);
+                    }
+                } else {
+                    if (data['message'] === 'Scraper had an error') {
+                        console.log('SCRAPER ERROR')
+                        setLoading(false);
+                        setSearchError(true);
+                    }
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                setLoading(false);
+                setSearchError(true);
+            });
+    }
+
+    const checkScraperStatus = (artist) => {
+        fetch('https://fastapi-production-3513.up.railway.app/get_active_scrapers')
+            .then(response => response.json())
+            .then(data => {
+                console.log('SCRAPERS')
+                //setActiveScrapers(data)
+                console.log(artist)
+                if (artistID !== '') {
+                    console.log(data.find(x => x._id === parseInt(artist)))
+                    if (data.find(x => x._id === parseInt(artist))) {
+                        if (data.find(x => x._id === parseInt(artist)).status === 'error') {
+                            setArtistID('');
+                            setCollaborators([]);
+                            setLoading(false);
+                            console.log("ERROR")
+                            setScraperError(true);
+                        }
+                    }
+                }
+            })
+            .catch(error => {
+                console.error(error)
+            });
+    }
 
     const openTwitterProfile = (username) => {
         const url = `https://www.twitter.com/${username}`;
@@ -54,9 +161,10 @@ function App() {
         };
 
         return (
-            <div onClick={onClick} className="bg-white shadow-md rounded-lg p-6 mx-4 my-4 w-64">
-                <div className="flex items-center">
-                    <div className="text-lg font-semibold">{producer.name}</div>
+            <div onClick={onClick} className="bg-white shadow-md  hover:shadow-xl rounded-lg p-6 mx-4 my-4 w-64 artist-item">
+                <div className="bg-white p-4">
+                    <div className="text-lg font-semibold mb-1">{producer.name}</div>
+                    <TimestampDisplay timestamp={producer.date} />
                 </div>
                 <div className="mt-4">
                     <button
@@ -96,22 +204,60 @@ function App() {
     };
 
     useEffect(() => {
-        fetch('https://fastapi-production-3513.up.railway.app/get_active_scrapers')
-            .then(response => response.json())
-            .then(data => setActiveScrapers(data))
-            .catch(error => console.error(error));
-    }, []);
+        const fetchData = async () => {
+            if (searchTerm !== '') {
+                //setActiveScrapers([])
+                fetch(`https://fastapi-production-3513.up.railway.app/search/${searchTerm}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('SCR56');
+                        console.log(data)
+                        setActiveScrapers(data);
+                        console.log(artistID);
+                    })
+                    .catch(error => console.error(error));
+            } else {
+                fetch('https://fastapi-production-3513.up.railway.app/get_active_scrapers')
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('SCRAPERS');
+                        setActiveScrapers(data);
+                        console.log(artistID);
+                    })
+                    .catch(error => console.error(error));
+            }
+        };
+
+        fetchData();
+    }, [searchTerm]);
 
 
     useEffect(() => {
         const interval = setInterval(async () => {
             fetch('https://fastapi-production-3513.up.railway.app/get_active_scrapers')
                 .then(response => response.json())
-                .then(data => setActiveScrapers(data))
+                .then(data => {
+                    console.log('SCRAPERS')
+                    //setActiveScrapers(data)
+                    console.log(artistID)
+                    if (artistID !== '') {
+                        console.log(data.find(x => x._id === parseInt(artistID)))
+                        if (data.find(x => x._id === parseInt(artistID))) {
+                            if (data.find(x => x._id === parseInt(artistID)).status === 'error') {
+                                setArtistID('');
+                                setCollaborators([]);
+                                setLoading(false);
+                                console.log("ERROR")
+                                setScraperError(true);
+                            }
+                        }
+                    }
+                })
                 .catch(error => console.error(error));
         }
-        , 10000);
-    }, []);
+        , 3000);
+        return () => clearInterval(interval);
+    }, [artistID]);
 
     function toggleMenu() {
         setMenuOpen(!menuOpen);
@@ -123,52 +269,76 @@ function App() {
         const response = await fetch(`https://fastapi-production-3513.up.railway.app/artists/${input}`)
             .then(response => response.json())
             .then(data => {
-                setClicked(true);
-                setLoading(true);
-                setArtistID(data)
-                console.log(data)
+                if (isDictionary(data)) {
+                    if (data['message'] === 'Artist not found') {
+                        setSearchError(true)
+                    }
+                }
+                else {
+                    setClicked(true);
+                    setLoading(true);
+                    setArtistID(data)
+                    console.log(data)
+                }
             })
             .catch(error => {
                 console.error(error)
-                setSearchError(true)
+                setScraperError(true);
             });
     };
 
     useEffect(() => {
+        console.log("HIHUQEU")
+        console.log(artistID)
         console.log(clicked)
         if (artistID !== '' && clicked === true) {
             const interval = setInterval(async () => {
                 console.log('fetching')
-                const response = await fetch(`https://fastapi-production-3513.up.railway.app/artist-data/${artistID}`);
-                const data = await response.json();
-                console.log(data);
-                console.log(loading);
-                if (Array.isArray(data)) {
-                    setCollaborators(data);
-                    setLoading(false);
-                    setSearch(false);
-                    console.log(loading);
-                }
-                else {
-                    if (data['message'] === 'Scraper had an error') {
-                        console.log('SCRAPER ERROR')
-                    }
-                }
-            }, 4000);
+                fetch(`https://fastapi-production-3513.up.railway.app/artist-data/${artistID}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        console.log(loading);
+                        if (!data.hasOwnProperty('message')) {
+                            console.log(data['_id'])
+                            console.log(parseInt(artistID))
+                            if (data['_id'] === parseInt(artistID)) {
+                                console.log('DATA')
+                                setCollaborators(data['collaborators']);
+                                setLoading(false);
+                                setSearch(false);
+                                console.log(loading);
+                            }
+                        } else {
+                            if (data['message'] === 'Scraper had an error') {
+                                console.log('SCRAPER ERROR')
+                                setLoading(false);
+                                setScraperError(true);
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        setLoading(false);
+                        setScraperError(true);
+                    });
+            }, 10000);
+
 
             return () => clearInterval(interval);
         }
     }, [artistID, clicked]);
 
     function backToHome() {
+        setSearch(true);
         setCollaborators([]);
         setClicked(false);
         setLoading(false);
         setArtistID('');
         setSearchError(false);
         setMenuOpen(false);
+        setScraperError(false);
         setInput('');
-        setSearch(true);
     }
 
     const handleMouseEnter = (event) => {
@@ -210,10 +380,9 @@ function App() {
                         </svg>
                     </button>
                     {menuOpen && (
-                        <div className="fixed top-0 right-0 h-screen w-64 z-50 bg-white shadow-lg">
-                            <div
-                                className="flex justify-between items-center bg-slate-800 text-white py-4 px-6 rounded-t-lg">
-                                <h2 className="text-lg font-semibold">Scanned Artists</h2>
+                        <div className="fixed top-0 right-0 h-screen w-72 z-50 bg-white shadow-lg">
+                            <div className="flex items-center justify-between bg-gray-900 py-5 px-7 rounded-t-lg">
+                                <h2 className="text-lg font-semibold text-white">Your Scraped Artists</h2>
                                 <button onClick={toggleMenu} className="text-white focus:outline-none">
                                     <svg className="h-6 w-6" viewBox="0 0 24 24">
                                         <path fill="currentColor"
@@ -221,11 +390,28 @@ function App() {
                                     </svg>
                                 </button>
                             </div>
-
-                            <div className="py-4 overflow-y-auto h-full">
-                                {active_scrapers.map((scr) => (
-                                    <ProducerCard onClick={() => handleProducerClick(scr)} key={scr.id} producer={scr} />
-                                ))}
+                            <div className="py-5 px-6 overflow-y-auto h-full">
+                                <div className="relative">
+                                    <input
+                                        type="text"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        placeholder="Search artists"
+                                        className="w-full h-12 px-4 py-3 bg-gray-100 rounded-lg text-sm font-medium text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    />
+                                    <button className="absolute right-0 top-0 mt-4 mr-4">
+                                        <svg className="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fillRule="evenodd"
+                                                  d="M14.308 13.41l5.547 5.546a1 1 0 1 1-1.415 1.415l-5.546-5.547a8 8 0 1 1 1.414-1.414zM9 15a6 6 0 1 0 0-12 6 6 0 0 0 0 12z"
+                                                  clipRule="evenodd" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div className="mt-8 space-y-4">
+                                    {active_scrapers.map((scr) => (
+                                        <ProducerCard onClick={() => handleProducerClick(scr)} key={scr.id} producer={scr} />
+                                    ))}
+                                </div>
                             </div>
                         </div>
 
@@ -236,17 +422,33 @@ function App() {
                 <div className="flex flex-col justify-center items-center h-screen bg-gray-100">
                     <div className="w-24 h-24 rounded-full border-4 border-t-blue-500 animate-spin mb-4"></div>
                     <h1 className="text-gray-800 font-bold text-2xl mb-2">Loading</h1>
-                    <p ref={statusRef} className="text-gray-600 font-bold">We're scraping the internet for you, this may take a few minutes...</p>
+                    <p ref={statusRef} className="text-gray-600 font-bold"></p>
                 </div>
             ) : (
                 <div className="">
                     {searchError && (
                         <div role="alert">
-                            <div className="bg-red-500 text-white font-bold rounded-t px-4 py-2">
+                            <div className="bg-red-500 text-white text-center font-bold rounded-t px-4 py-2">
                                 Error
                             </div>
                             <div className="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700">
-                                <p>Unable to find artist</p>
+                                <p>Artist not found. Sorry about that :(</p>
+                            </div>
+                        </div>
+                    )}
+                    {scraperError && (
+                        <div className="flex items-center justify-center min-h-screen">
+                            <div role="alert" className="w-full max-w-md bg-white shadow-md rounded-lg overflow-hidden">
+                                <div className="bg-red-500 text-white font-bold text-center rounded-t-lg px-4 py-2">
+                                    Error
+                                </div>
+                                <div
+                                    className="border border-t-0 border-red-400 rounded-b-lg bg-red-100 px-4 py-3 text-red-700">
+                                    <p className="text-center">
+                                        The scraper encountered an error while searching for this artist. Please try
+                                        again later.
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     )}

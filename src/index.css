@@ -17,6 +17,11 @@ code {
     monospace;
 }
 
+.artist-item {
+  display: flex;
+  flex-direction: column;
+}
+
 .blur-and-darken {
   filter: blur(5px);
   opacity: 0.5;
