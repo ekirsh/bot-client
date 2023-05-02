@@ -139,6 +139,7 @@ function App() {
                         if (data.find(x => x._id === parseInt(artist)).status === 'error') {
                             setArtistID('');
                             setCollaborators([]);
+                            setSearch(false);
                             setLoading(false);
                             console.log("ERROR")
                             setScraperError(true);
