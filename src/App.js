@@ -93,33 +93,36 @@ function App() {
     };
 
     const checkArtistData = (artist) => {
-        fetch(`https://fastapi-production-3513.up.railway.app/artist-data/${artist}`)
+        fetch(`https://fastapi-production-3513.up.railway.app/artist-data/${artistID}`)
             .then(response => response.json())
             .then(data => {
                 console.log(data);
                 console.log(loading);
                 if (!data.hasOwnProperty('message')) {
                     console.log(data['_id'])
-                    console.log(parseInt(artist))
-                    if (data['_id'] === parseInt(artist)) {
+                    console.log(parseInt(artistID))
+                    if (data['_id'] === parseInt(artistID) && artistID !== '' && clicked === true) {
                         console.log('DATA')
                         setCollaborators(data['collaborators']);
                         setLoading(false);
                         setSearch(false);
                         console.log(loading);
                     }
+                    else {
+                        console.log('NOPE NOPE');
+                    }
                 } else {
                     if (data['message'] === 'Scraper had an error') {
                         console.log('SCRAPER ERROR')
                         setLoading(false);
-                        setSearchError(true);
+                        setScraperError(true);
                     }
                 }
             })
             .catch(error => {
                 console.log(error);
                 setLoading(false);
-                setSearchError(true);
+                setScraperError(true);
             });
     }
 
@@ -302,12 +305,15 @@ function App() {
                         if (!data.hasOwnProperty('message')) {
                             console.log(data['_id'])
                             console.log(parseInt(artistID))
-                            if (data['_id'] === parseInt(artistID)) {
+                            if (data['_id'] === parseInt(artistID) && artistID !== '' && clicked === true) {
                                 console.log('DATA')
                                 setCollaborators(data['collaborators']);
                                 setLoading(false);
                                 setSearch(false);
                                 console.log(loading);
+                            }
+                            else {
+                                console.log('NOPE NOPE');
                             }
                         } else {
                             if (data['message'] === 'Scraper had an error') {
@@ -431,7 +437,7 @@ function App() {
                             <div className="bg-red-500 text-white text-center font-bold rounded-t px-4 py-2">
                                 Error
                             </div>
-                            <div className="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700">
+                            <div className="border border-t-0 border-red-400 text-center rounded-b bg-red-100 px-4 py-3 text-red-700">
                                 <p>Artist not found. Sorry about that :(</p>
                             </div>
                         </div>
