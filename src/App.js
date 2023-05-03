@@ -581,16 +581,11 @@ function App() {
                                         </div>
                                     </div>
                                     <div className="px-6 py-4">
-                                        <div className="flex flex-col gap-2">
-                                        <BeautifulElement result={result} class="mb-8"/>
-                                        <SongList songs={result.song_list} class="mb-8"/>
+                                        <div className="flex flex-col gap-2 mb-4">
                                         <p className="text-gray-400 text-base mb-2 gap-2">{result.info.description}</p>
-                                            {result.info.management?.map((ffo, index) => (
-                                                <p className="text-gray-400 text-base mb-2 gap-2">{ffo}</p>
-                                                ))}
-                                            {result.info.publishing?.map((ffo, index) => (
-                                                <p className="text-gray-400 text-base mb-2 gap-2">{ffo}</p>
-                                            ))}
+
+                                            <BeautifulElement result={result} class="mb-8"/>
+                                            <SongList songs={result.song_list} class="mb-8"/>
                                         </div>
                                         <h3 className="text-gray-800 font-semibold text-lg mb-2">Frequent Collaborators:</h3>
                                         <ul className="flex flex-wrap mb-4">
@@ -600,7 +595,7 @@ function App() {
                                             ))}
                                         </ul>
                                         <h3 className="text-gray-800 font-semibold text-lg mb-2">Top Songs:</h3>
-                                        <div className="grid grid-cols-2 gap-2">
+                                        <div className="grid grid-cols-2 gap-2 mb-4">
                                             {result.songs.slice(0,6).map((song, index) => (
                                                 <div className="bg-white rounded-lg shadow-lg overflow-hidden">
                                                     <img className="w-full h-40 object-cover" src={song.song_art}
@@ -612,6 +607,34 @@ function App() {
                                                 </div>
                                             ))}
                                         </div>
+                                        {result.info.management?.map((ffo, index) => (
+                                            <div className="bg-gray-100 p-2 rounded-lg mb-4">
+                                                <div className="flex items-center gap-2 text-gray-800">
+                                                    <p className="text-gray-950 font-bold mb-2 gap-2">{ffo}</p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                        {result.info.mgmt_email_list?.map((ffo, index) => (
+                                            <div className="bg-gray-100 p-2 rounded-lg mb-4">
+                                                <div className="flex items-center gap-2 text-gray-800">
+                                                    <p className="text-gray-950 font-bold mb-2 gap-2">{ffo}</p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                        {result.info.publisher?.map((ffo, index) => (
+                                            <div className="bg-gray-100 p-2 rounded-lg mb-4">
+                                                <div className="flex items-center gap-2 text-gray-800">
+                                                    <p className="text-gray-950 font-bold mb-2 gap-2">Possible Email: {ffo}</p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                        {result.info.pub_email_list?.map((ffo, index) => (
+                                            <div className="bg-gray-100 p-2 rounded-lg mb-4">
+                                                <div className="flex items-center gap-2 text-gray-800">
+                                                    <p className="text-gray-950 font-bold mb-2 gap-2">Possible Email: {ffo}</p>
+                                                </div>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
                             ))}
