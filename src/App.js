@@ -607,6 +607,7 @@ function App() {
                                                 </div>
                                             ))}
                                         </div>
+                                        <h3 className="text-gray-800 font-semibold text-lg mb-2">Management/Pub Info:</h3>
                                         {result.info.management?.map((ffo, index) => (
                                             <div className="bg-gray-100 p-2 rounded-lg mb-4">
                                                 <div className="flex items-center gap-2 text-gray-800">
@@ -617,21 +618,21 @@ function App() {
                                         {result.info.mgmt_email_list?.map((ffo, index) => (
                                             <div className="bg-gray-100 p-2 rounded-lg mb-4">
                                                 <div className="flex items-center gap-2 text-gray-800">
-                                                    <p className="text-gray-950 font-bold mb-2 gap-2">{ffo}</p>
+                                                    <p className="text-gray-950 font-bold mb-2 gap-2">Possible Contact Email: {ffo}</p>
                                                 </div>
                                             </div>
                                         ))}
                                         {result.info.publisher?.map((ffo, index) => (
                                             <div className="bg-gray-100 p-2 rounded-lg mb-4">
                                                 <div className="flex items-center gap-2 text-gray-800">
-                                                    <p className="text-gray-950 font-bold mb-2 gap-2">Possible Email: {ffo}</p>
+                                                    <p className="text-gray-950 font-bold mb-2 gap-2">{ffo}</p>
                                                 </div>
                                             </div>
                                         ))}
                                         {result.info.pub_email_list?.map((ffo, index) => (
                                             <div className="bg-gray-100 p-2 rounded-lg mb-4">
                                                 <div className="flex items-center gap-2 text-gray-800">
-                                                    <p className="text-gray-950 font-bold mb-2 gap-2">Possible Email: {ffo}</p>
+                                                    <p className="text-gray-950 font-bold mb-2 gap-2">Possible Contact Email: {ffo}</p>
                                                 </div>
                                             </div>
                                         ))}
