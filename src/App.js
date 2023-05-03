@@ -40,7 +40,7 @@ function App() {
             <div className="bg-gray-100 p-2 rounded-lg">
                 <h3 className="text-gray-800 mb-1 text-sm">Worked on:</h3>
                 <ul className="divide-y divide-gray-300">
-                    {songs.map((song, index) => (
+                    {songs.slice(0,6).map((song, index) => (
                         <li key={index} className="py-1">
                             <div className="flex items-center gap-1 text-gray-800">
                                 <span className="text-sm font-semibold truncate max-w-md">{song.title}</span>
@@ -585,10 +585,10 @@ function App() {
                                         <BeautifulElement result={result} class="mb-8"/>
                                         <SongList songs={result.song_list} class="mb-8"/>
                                         <p className="text-gray-400 text-base mb-2 gap-2">{result.info.description}</p>
-                                            {result.info.management.map((ffo, index) => (
+                                            {result.info.management?.map((ffo, index) => (
                                                 <p className="text-gray-400 text-base mb-2 gap-2">{ffo}</p>
                                                 ))}
-                                            {result.info.publishing.map((ffo, index) => (
+                                            {result.info.publishing?.map((ffo, index) => (
                                                 <p className="text-gray-400 text-base mb-2 gap-2">{ffo}</p>
                                             ))}
                                         </div>
