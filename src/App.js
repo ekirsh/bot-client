@@ -19,6 +19,39 @@ function App() {
     const [active_scrapers, setActiveScrapers] = useState([]);
     const [searchError, setSearchError] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
+    const [artistName, setArtistName] = useState("");
+
+    const BeautifulElement = ({ result }) => {
+        return (
+            <div className="bg-gray-100 p-2 rounded-lg">
+                <div className="flex items-center gap-2 text-gray-800">
+                    <span className="text-sm font-semibold"></span>
+                    <span className="text-lg font-bold">{result.count}</span>
+                    <span className="text-sm">
+      {result.count > 1 ? 'songs' : 'song'} with {artistName}
+    </span>
+                </div>
+            </div>
+        );
+    };
+
+    const SongList = ({ songs }) => {
+        return (
+            <div className="bg-gray-100 p-2 rounded-lg">
+                <h3 className="text-gray-800 mb-1 text-sm">Worked on:</h3>
+                <ul className="divide-y divide-gray-300">
+                    {songs.map((song, index) => (
+                        <li key={index} className="py-1">
+                            <div className="flex items-center gap-1 text-gray-800">
+                                <span className="text-sm font-semibold truncate max-w-md">{song.title}</span>
+                                <span className="text-xs ml-1">by {artistName}</span>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        );
+    };
 
     useEffect(() => {
         if (loading) {
@@ -73,18 +106,18 @@ function App() {
     const handleProducerClick = (producer) => {
         setClicked(false);
         setSearch(true);
-        setArtistID('');
-        setCollaborators([]);
         setSearchError(false);
         setScraperError(false);
-        setArtistID(producer._id.toString());
-        setMenuOpen(false)
+        setMenuOpen(false);
         setLoading(true);
         setClicked(true);
+        console.log(producer);
+        console.log(`Producer ${producer.name} clicked!`);
+        setArtistID(producer._id.toString());
+        setArtistName(producer.name)
+        setCollaborators([]);
         checkScraperStatus(producer._id.toString());
         checkArtistData(producer._id.toString());
-        console.log(producer)
-        console.log(`Producer ${producer.name} clicked!`);
     };
 
     const openInstagramProfile = (username) => {
@@ -93,17 +126,18 @@ function App() {
     };
 
     const checkArtistData = (artist) => {
-        fetch(`https://fastapi-production-3513.up.railway.app/artist-data/${artistID}`)
+        fetch(`https://fastapi-production-3513.up.railway.app/artist-data/${artist}`)
             .then(response => response.json())
             .then(data => {
                 console.log(data);
                 console.log(loading);
                 if (!data.hasOwnProperty('message')) {
                     console.log(data['_id'])
-                    console.log(parseInt(artistID))
-                    if (data['_id'] === parseInt(artistID) && artistID !== '' && clicked === true) {
+                    console.log(parseInt(artist))
+                    if (data['_id'] === parseInt(artist) && artistID !== '' && clicked === true) {
                         console.log('DATA')
                         setCollaborators(data['collaborators']);
+                        setArtistName(data['name']);
                         setLoading(false);
                         setSearch(false);
                         console.log(loading);
@@ -131,7 +165,7 @@ function App() {
             .then(response => response.json())
             .then(data => {
                 console.log('SCRAPERS')
-                setActiveScrapers(data)
+
                 console.log(artist)
                 if (artistID !== '') {
                     console.log(data.find(x => x._id === parseInt(artist)))
@@ -244,10 +278,14 @@ function App() {
                 .then(response => response.json())
                 .then(data => {
                     console.log('SCRAPERS')
-                    setActiveScrapers(data)
+                    console.log(searchTerm)
+                    if (searchTerm !== "") {
+                        setActiveScrapers(data);
+                    }
                     console.log(artistID)
                     if (artistID !== '') {
                         console.log(data.find(x => x._id === parseInt(artistID)))
+                        setArtistName(data.find(x => x._id === parseInt(artistID)).name);
                         if (data.find(x => x._id === parseInt(artistID))) {
                             if (data.find(x => x._id === parseInt(artistID)).status === 'error') {
                                 setArtistID('');
@@ -263,7 +301,7 @@ function App() {
                 })
                 .catch(error => console.error(error));
         }
-        , 3000);
+        , 4500);
         return () => clearInterval(interval);
     }, [artistID]);
 
@@ -314,10 +352,14 @@ function App() {
                                 console.log('DATA')
                                 setCollaborators(data['collaborators']);
                                 setLoading(false);
+                                setArtistName(data['name']);
                                 setSearch(false);
                                 console.log(loading);
                             }
                             else {
+                                setCollaborators([]);
+                                setLoading(true);
+                                setSearch(true);
                                 console.log('NOPE NOPE');
                             }
                         } else {
@@ -338,7 +380,7 @@ function App() {
 
             return () => clearInterval(interval);
         }
-    }, [artistID, clicked]);
+    });
 
     function backToHome() {
         setSearch(true);
@@ -347,6 +389,7 @@ function App() {
         setLoading(false);
         setArtistID('');
         setSearchError(false);
+        setArtistName('');
         setMenuOpen(false);
         setScraperError(false);
         setInput('');
@@ -384,7 +427,9 @@ function App() {
 
             <header className="py-6 px-8 bg-white shadow-md sticky z-50 top-0">
                 <div className="flex justify-between items-center z-50 sticky top-0">
-                    <h1 onClick={backToHome} className="text-xl font-bold text-gray-900">beatscout</h1>
+                    <div className="flex flex-row gap-2">
+                    <h1 onClick={backToHome} className="text-xl font-bold text-gray-900">beatscout {artistName && <div className="text-m text-sans text-gray-500">{artistName}</div>}</h1>
+                    </div>
                     <button onClick={toggleMenu} className="p-2 bg-gray-200 rounded-md text-gray-900 hover:bg-gray-300 focus:outline-none">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
                             <path fillRule="evenodd" d="M3 4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v1H3V4zm3 4a1 1 0 0 1-1-1V5h10v2a1 1 0 0 1-1 1H6zm-3 5a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v1H3v-1zm3 4a1 1 0 0 1-1-1v-2h10v2a1 1 0 0 1-1 1H6z" clipRule="evenodd" />
@@ -536,7 +581,11 @@ function App() {
                                         </div>
                                     </div>
                                     <div className="px-6 py-4">
-                                        <p className="text-gray-400 text-base mb-4 gap-2">{result.info.description}</p>
+                                        <div className="flex flex-col gap-2">
+                                        <BeautifulElement result={result} class="mb-8"/>
+                                        <SongList songs={result.song_list} class="mb-8"/>
+                                        <p className="text-gray-400 text-base mb-2 gap-2">{result.info.description}</p>
+                                        </div>
                                         <h3 className="text-gray-800 font-semibold text-lg mb-2">Frequent Collaborators:</h3>
                                         <ul className="flex flex-wrap mb-4">
                                             {result.collaborators.slice(0, 6).map((c, index) => (
