@@ -138,6 +138,7 @@ function App() {
                         console.log('DATA')
                         setCollaborators(data['collaborators']);
                         setArtistName(data['name']);
+                        console.log(data['info']['mgmt_email_list'])
                         setLoading(false);
                         setSearch(false);
                         console.log(loading);
