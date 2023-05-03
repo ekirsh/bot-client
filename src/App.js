@@ -585,6 +585,12 @@ function App() {
                                         <BeautifulElement result={result} class="mb-8"/>
                                         <SongList songs={result.song_list} class="mb-8"/>
                                         <p className="text-gray-400 text-base mb-2 gap-2">{result.info.description}</p>
+                                            {result.info.management.map((ffo, index) => (
+                                                <p className="text-gray-400 text-base mb-2 gap-2">{ffo}</p>
+                                                ))}
+                                            {result.info.publishing.map((ffo, index) => (
+                                                <p className="text-gray-400 text-base mb-2 gap-2">{ffo}</p>
+                                            ))}
                                         </div>
                                         <h3 className="text-gray-800 font-semibold text-lg mb-2">Frequent Collaborators:</h3>
                                         <ul className="flex flex-wrap mb-4">
