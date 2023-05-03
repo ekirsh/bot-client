@@ -131,7 +131,7 @@ function App() {
             .then(response => response.json())
             .then(data => {
                 console.log('SCRAPERS')
-                //setActiveScrapers(data)
+                setActiveScrapers(data)
                 console.log(artist)
                 if (artistID !== '') {
                     console.log(data.find(x => x._id === parseInt(artist)))
@@ -140,6 +140,7 @@ function App() {
                             setArtistID('');
                             setCollaborators([]);
                             setSearch(false);
+                            setClicked(false);
                             setLoading(false);
                             console.log("ERROR")
                             setScraperError(true);
@@ -242,7 +243,7 @@ function App() {
                 .then(response => response.json())
                 .then(data => {
                     console.log('SCRAPERS')
-                    //setActiveScrapers(data)
+                    setActiveScrapers(data)
                     console.log(artistID)
                     if (artistID !== '') {
                         console.log(data.find(x => x._id === parseInt(artistID)))
@@ -250,6 +251,8 @@ function App() {
                             if (data.find(x => x._id === parseInt(artistID)).status === 'error') {
                                 setArtistID('');
                                 setCollaborators([]);
+                                setSearch('');
+                                setClicked(false);
                                 setLoading(false);
                                 console.log("ERROR")
                                 setScraperError(true);
