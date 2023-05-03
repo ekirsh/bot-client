@@ -238,6 +238,7 @@ function App() {
 
 
     useEffect(() => {
+        console.log("HELLO")
         const interval = setInterval(async () => {
             fetch('https://fastapi-production-3513.up.railway.app/get_active_scrapers')
                 .then(response => response.json())
