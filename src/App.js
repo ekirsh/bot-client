@@ -616,7 +616,7 @@ function App() {
                                                 </div>
                                             </div>
                                         ))}
-                                        {result.info.mgmt_email_list?.map((ffo, index) => (
+                                        {result.info?.mgmt_email_list?.map((ffo, index) => (
                                             <div className="bg-gray-100 p-2 rounded-lg mb-4">
                                                 <div className="flex items-center gap-2 text-gray-800">
                                                     <p className="text-gray-950 font-bold mb-2 gap-2">Possible Contact Email: {ffo}</p>
@@ -630,7 +630,7 @@ function App() {
                                                 </div>
                                             </div>
                                         ))}
-                                        {result.info.pub_email_list?.map((ffo, index) => (
+                                        {result.info?.pub_email_list?.map((ffo, index) => (
                                             <div className="bg-gray-100 p-2 rounded-lg mb-4">
                                                 <div className="flex items-center gap-2 text-gray-800">
                                                     <p className="text-gray-950 font-bold mb-2 gap-2">Possible Contact Email: {ffo}</p>
