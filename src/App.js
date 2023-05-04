@@ -25,7 +25,7 @@ function App() {
         return (
             <div className="bg-gray-100 p-2 rounded-lg">
                 <div className="flex items-center gap-2 text-gray-800">
-                    <span className="text-sm font-semibold"></span>
+                    <span className="text-sm font-semibold">Wrote/produced on </span>
                     <span className="text-lg font-bold">{result.count}</span>
                     <span className="text-sm">
       {result.count > 1 ? 'songs' : 'song'} with {artistName}
@@ -38,7 +38,7 @@ function App() {
     const SongList = ({ songs }) => {
         return (
             <div className="bg-gray-100 p-2 rounded-lg">
-                <h3 className="text-gray-800 mb-1 text-sm">Worked on:</h3>
+                <h3 className="text-gray-800 mb-1 text-sm">Wrote on:</h3>
                 <ul className="divide-y divide-gray-300">
                     {songs.slice(0,6).map((song, index) => (
                         <li key={index} className="py-1">
